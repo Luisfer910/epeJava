@@ -1,14 +1,15 @@
 
 package taller_java_epe;
 
+import java.sql.SQLException;
+
 public class Interfaz extends javax.swing.JFrame {
 
     public Interfaz() { 
         initComponents();
         
     }
-
-  
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -186,22 +187,29 @@ public class Interfaz extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jText_rutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jText_rutActionPerformed
-        // TODO add your handling code here:
+    
     }//GEN-LAST:event_jText_rutActionPerformed
 
     private void jText_nombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jText_nombreActionPerformed
-        // TODO add your handling code here:
+      
     }//GEN-LAST:event_jText_nombreActionPerformed
 
     private void btBuscarPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btBuscarPActionPerformed
-                                         
-    try {
-        pacientes objPac = new pacientes(this.jText_rut.getText(), "", "", ""); // Solo necesitas el rut para buscar
-        objPac.cargarRutPaciente();
-        // Actualiza JTextArea o JTextField con la información del paciente
-        this.jTextArea1.setText(objPac.toString()); // Suponiendo que tienes un JTextArea para mostrar los datos
-    } catch (Exception e) {
-        // Maneja la excepción adecuadamente
+    String rut = this.jText_rut.getText(); 
+    
+    try {  if (rut.isEmpty()) {
+            // Mostrar todos los pacientes si el campo de búsqueda está vacío
+            String pacientesInfo = Pacientes.mostrarTodos();
+            this.jTextArea1.setText("Lista de Pacientes.\n\n" + pacientesInfo);
+        } else {
+            // Instanciar un nuevo objeto Pacientes solo con el rut
+            Pacientes objPac = new Pacientes(rut, "", "", ""); // Solo necesitas el rut para buscar
+            objPac.cargarRutPaciente();
+            
+            // Actualiza JTextArea o JTextField con la información del paciente
+            this.jTextArea1.setText(objPac.toString()); // JTextArea para mostrar los datos
+        }
+    } catch (SQLException e) {   // Maneja la excepción adecuadamente
         System.out.println("Error al buscar paciente: " + e.getMessage());
    
     }    }//GEN-LAST:event_btBuscarPActionPerformed
@@ -211,18 +219,39 @@ public class Interfaz extends javax.swing.JFrame {
     }//GEN-LAST:event_btSalirActionPerformed
 
     private void btGuardarPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btGuardarPActionPerformed
-        try {
-          pacientes objPac = new pacientes(this.jText_rut.getText(), this.jText_nombre.getText(), this.jText_apellido.getText(), this.jText_correo.getText());
-          objPac.guardarPaciente();
-        } catch (Exception e) {
-        }
+                        //instancio un nuevo objeto                  
+    Pacientes objPac = new Pacientes(this.jText_rut.getText(), this.jText_nombre.getText(), this.jText_apellido.getText(), this.jText_correo.getText());
+        
+    try {
+        objPac.guardarPaciente(); // Guardar el paciente en la base de datos
+        
+        // Obtener la lista actualizada de todos los pacientes y mostrarla en el JTextArea
+        String pacientesInfo = Pacientes.mostrarTodos();
+        this.jTextArea1.setText("Datos Actualizados.\n\n" + pacientesInfo);
+        
+        jText_rut.setText("");
+        jText_nombre.setText("");
+        jText_apellido.setText("");
+        jText_correo.setText("");
+        
+    } catch (SQLException e) {
+        // Manejar excepciones de SQL
+        System.out.println("Error al guardar paciente en la base de datos: " + e.getMessage());
+        
+    } catch (Exception e) {
+        // Manejar cualquier otra excepción
+        System.out.println("Error al guardar paciente: " + e.getMessage());
+    
+    }
     }//GEN-LAST:event_btGuardarPActionPerformed
 
     private void btEliminarPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEliminarPActionPerformed
         try {
-          pacientes objPac = new pacientes(this.jText_rut.getText(), this.jText_nombre.getText(), this.jText_apellido.getText(), this.jText_correo.getText());
-          objPac.guardarPaciente();
-        } catch (Exception e) {
+          Pacientes objPac = new Pacientes(this.jText_rut.getText(), this.jText_nombre.getText(), this.jText_apellido.getText(), this.jText_correo.getText());
+          objPac.eliminar();
+          String pacientesInfo = Pacientes.mostrarTodos();
+        this.jTextArea1.setText("Datos Actualizados.\n\n" + pacientesInfo);
+        } catch (SQLException e) {
         }
     }//GEN-LAST:event_btEliminarPActionPerformed
 
