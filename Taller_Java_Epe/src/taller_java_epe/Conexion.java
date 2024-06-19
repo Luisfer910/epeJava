@@ -15,8 +15,6 @@ public class Conexion{
         public static Connection conx; // Objeto de conexión a la base de datos
         public static PreparedStatement st;//une el lenguaje java y sql
         
-        public static boolean buscarPaciente;
-        
          // Método para establecer una conexión con la base de datos
         public static void conectar(){
             
